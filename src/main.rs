@@ -8,6 +8,18 @@ fn main() {
     let mut short_interval_time: u16 = 5;
     let mut long_interval_time: u16 = 15;
 
+    set_args(
+        &mut pomodoro_time,
+        &mut short_interval_time,
+        &mut long_interval_time,
+    );
+
+    start_notification_daemon();
+
+    run_pomodoro(pomodoro_time, short_interval_time, long_interval_time);
+}
+
+fn set_args(pomodoro_time: &mut u16, short_interval_time: &mut u16, long_interval_time: &mut u16) {
     let mut args = args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -18,7 +30,7 @@ fn main() {
                     .parse::<u16>()
                 {
                     Ok(time) => {
-                        pomodoro_time = time;
+                        *pomodoro_time = time;
                         println!("pomodoro {}", time)
                     }
                     Err(_) => println!("invalid arg, using default value for Pomodoro."),
@@ -31,7 +43,7 @@ fn main() {
                     .parse::<u16>()
                 {
                     Ok(time) => {
-                        short_interval_time = time;
+                        *short_interval_time = time;
                         println!("short {}", time)
                     }
                     Err(_) => println!("invalid arg, using default value for Pomodoro."),
@@ -44,7 +56,7 @@ fn main() {
                     .parse::<u16>()
                 {
                     Ok(time) => {
-                        long_interval_time = time;
+                        *long_interval_time = time;
                         println!("long {}", time)
                     }
                     Err(_) => println!("invalid arg, using default value for Pomodoro."),
@@ -53,10 +65,6 @@ fn main() {
             _ => println!("sem args"),
         }
     }
-
-    start_notification_daemon();
-
-    run_pomodoro(pomodoro_time, short_interval_time, long_interval_time);
 }
 
 fn run_pomodoro(pomodoro_time: u16, short_interval_time: u16, long_interval_time: u16) {
