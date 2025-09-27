@@ -60,9 +60,10 @@ fn main() {
 }
 
 fn run_pomodoro(pomodoro_time: u16, short_interval_time: u16, long_interval_time: u16) {
-    thread::sleep(Duration::from_secs(pomodoro_time as u64) / 100);
+    thread::sleep(Duration::from_secs(pomodoro_time as u64) / 20);
     spawn_notification("Tempo de fazer uma pausa");
-    thread::sleep(Duration::from_secs(short_interval_time as u64) / 100);
+
+    thread::sleep(Duration::from_secs(short_interval_time as u64) / 5);
     spawn_notification("Volte ao Trabalho");
 }
 
@@ -81,8 +82,6 @@ fn run_dunst() {
 
 fn spawn_notification(message: &str) {
     Command::new("notify-send")
-        .arg("-u")
-        .arg("critical")
         .arg("Pomodoro")
         .arg(message)
         .spawn()
