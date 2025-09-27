@@ -7,6 +7,7 @@ fn main() {
     let mut pomodoro_time: u16 = 25;
     let mut short_interval_time: u16 = 5;
     let mut long_interval_time: u16 = 15;
+    let pomodoros_per_round: u16 = 4;
 
     let mut args = args().skip(1);
     while let Some(arg) = args.next() {
@@ -60,11 +61,45 @@ fn main() {
 }
 
 fn run_pomodoro(pomodoro_time: u16, short_interval_time: u16, long_interval_time: u16) {
-    thread::sleep(Duration::from_secs(pomodoro_time as u64) / 20);
-    spawn_notification("  Tempo de fazer uma pausa");
+    loop {
+        sleep(pomodoro_time / 5);
 
-    thread::sleep(Duration::from_secs(short_interval_time as u64) / 5);
-    spawn_notification("  Volte ao Trabalho");
+        spawn_notification("  Tempo de fazer uma pausa");
+        sleep(short_interval_time / 2);
+
+        spawn_notification("  Volte ao Trabalho");
+        sleep(pomodoro_time / 5);
+
+        spawn_notification("  Tempo de fazer uma pausa");
+        sleep(short_interval_time / 2);
+
+        spawn_notification("  Volte ao Trabalho");
+        sleep(pomodoro_time / 5);
+
+        spawn_notification("  Tempo de fazer uma pausa");
+        sleep(short_interval_time / 2);
+
+        spawn_notification("  Volte ao Trabalho");
+        sleep(pomodoro_time / 5);
+
+        spawn_long_break_notification();
+        sleep(long_interval_time / 4);
+        spawn_notification("  Volte ao Trabalho");
+    }
+}
+
+fn spawn_long_break_notification() {
+    Command::new("notify-send")
+        .arg("-u")
+        .arg("critical")
+        .arg("Pomodoro")
+        .arg("  Hora de uma pausa Longa")
+        .spawn()
+        .expect("error while sending notification");
+}
+
+fn sleep(time: u16) {
+    thread::sleep(Duration::from_secs(time as u64));
 }
 
 fn start_notification_daemon() {
