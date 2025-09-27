@@ -7,7 +7,6 @@ fn main() {
     let mut pomodoro_time: u16 = 25;
     let mut short_interval_time: u16 = 5;
     let mut long_interval_time: u16 = 15;
-    let pomodoros_per_round: u16 = 4;
 
     let mut args = args().skip(1);
     while let Some(arg) = args.next() {
