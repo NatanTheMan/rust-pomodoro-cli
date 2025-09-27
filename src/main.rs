@@ -1,8 +1,30 @@
+use std::env::args;
+use std::num::ParseIntError;
 use std::process::Command;
 use std::{thread, time::Duration};
 
 fn main() {
     start_notification_daemon();
+
+    let mut args = args().skip(1);
+
+    while let Some(arg) = args.next() {
+        match arg.as_str() {
+            "-p" => {
+                if let Err(_) = args
+                    .next()
+                    .expect("error while reading arg after flag")
+                    .parse::<i32>()
+                {
+                    println!("invalid arg, using default values.");
+                } else {
+                    println!("tudo certo");
+                }
+            }
+            _ => (),
+        }
+    }
+
     loop {
         let pomodoro: u16 = 15; // 25min
         thread::sleep(Duration::from_secs(pomodoro as u64));
@@ -15,7 +37,6 @@ fn main() {
 
 fn start_notification_daemon() {
     let status = Command::new("pgrep").arg("dunst").status();
-    println!("\x1B[2J\x1B[1;1H");
     match status {
         Ok(s) if s.code() == Some(1) => run_dunst(),
         Ok(_) => (),
