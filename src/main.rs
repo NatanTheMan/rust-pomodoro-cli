@@ -70,44 +70,34 @@ fn set_args(pomodoro_time: &mut u16, short_interval_time: &mut u16, long_interva
 
 fn run_pomodoro(pomodoro_time: u16, short_interval_time: u16, long_interval_time: u16) {
     loop {
-        sleep(pomodoro_time / 5);
+        sleep(pomodoro_time);
 
-        spawn_notification("  Tempo de fazer uma pausa");
-        sleep(short_interval_time / 2);
+        spawn_notification("  Tempo de fazer uma pausa", "normal");
+        sleep(short_interval_time);
 
-        spawn_notification("  Volte ao Trabalho");
-        sleep(pomodoro_time / 5);
+        spawn_notification("  Volte ao Trabalho", "normal");
+        sleep(pomodoro_time);
 
-        spawn_notification("  Tempo de fazer uma pausa");
-        sleep(short_interval_time / 2);
+        spawn_notification("  Tempo de fazer uma pausa", "normal");
+        sleep(short_interval_time);
 
-        spawn_notification("  Volte ao Trabalho");
-        sleep(pomodoro_time / 5);
+        spawn_notification("  Volte ao Trabalho", "normal");
+        sleep(pomodoro_time);
 
-        spawn_notification("  Tempo de fazer uma pausa");
-        sleep(short_interval_time / 2);
+        spawn_notification("  Tempo de fazer uma pausa", "normal");
+        sleep(short_interval_time);
 
-        spawn_notification("  Volte ao Trabalho");
-        sleep(pomodoro_time / 5);
+        spawn_notification("  Volte ao Trabalho", "normal");
+        sleep(pomodoro_time);
 
-        spawn_long_break_notification();
-        sleep(long_interval_time / 4);
-        spawn_notification("  Volte ao Trabalho");
+        spawn_notification("  Hora de uma pausa Longa", "critical");
+        sleep(long_interval_time);
+        spawn_notification("  Volte ao Trabalho", "normal");
     }
 }
 
-fn spawn_long_break_notification() {
-    Command::new("notify-send")
-        .arg("-u")
-        .arg("critical")
-        .arg("Pomodoro")
-        .arg("  Hora de uma pausa Longa")
-        .spawn()
-        .expect("error while sending notification");
-}
-
 fn sleep(time: u16) {
-    thread::sleep(Duration::from_secs(time as u64));
+    thread::sleep(Duration::from_secs((time as u64) * 60));
 }
 
 fn start_notification_daemon() {
@@ -123,8 +113,10 @@ fn run_dunst() {
     Command::new("dunst").spawn().expect("cant run Dunst");
 }
 
-fn spawn_notification(message: &str) {
+fn spawn_notification(message: &str, urgency: &str) {
     Command::new("notify-send")
+        .arg("-u")
+        .arg(urgency)
         .arg("Pomodoro")
         .arg(message)
         .spawn()
