@@ -1,3 +1,4 @@
+use rodio::{Decoder, OutputStreamBuilder, Sink};
 use std::env::args;
 use std::process::Command;
 use std::{thread, time::Duration};
@@ -128,4 +129,15 @@ fn spawn_notification(message: &str) {
         .arg(message)
         .spawn()
         .expect("error while sending notification");
+    play_notification_sound();
+}
+
+fn play_notification_sound() {
+    let stream_handle = OutputStreamBuilder::open_default_stream().unwrap();
+    let sink = Sink::connect_new(stream_handle.mixer());
+
+    let file = std::fs::File::open("./eagle_sound.mp3").unwrap();
+    sink.append(Decoder::try_from(file).unwrap());
+
+    sink.sleep_until_end();
 }
